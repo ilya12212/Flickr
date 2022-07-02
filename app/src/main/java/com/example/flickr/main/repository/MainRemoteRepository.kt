@@ -9,16 +9,14 @@ import timber.log.Timber
 
 class MainRemoteRepository (
     private val api: FlickrApi
-    ) : MainRepository {
-        override suspend fun getPhotos(page : Int): List<Photo> {
-            val data = api.getPhoto(API_KEY, "flickr.interestingness.getList", page, "photos", "json", 1)
-            return MainConverter.fromNetwork(data)
-        }
+) : MainRepository {
+    override suspend fun getPhotos(page : Int): List<Photo> {
+        val data = api.getPhoto(API_KEY, "flickr.interestingness.getList", page, "photos", "json", 1)
+        return MainConverter.fromNetwork(data)
+    }
 
     override suspend fun searchPhotos(page : Int, text: String): List<Photo> {
         val data = api.getSearchPhoto(API_KEY, "flickr.photos.search",  page,"photos", "json", 1, text)
-        data.photos
-        Timber.i("${data.photos}")
         return MainConverter.fromNetwork(data)
     }
 }

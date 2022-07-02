@@ -44,7 +44,10 @@
         android:gravity="center"
         android:text="Ничего не найдено !"
         android:textSize="30sp"
-        android:visibility="gone"/>
+        android:textColor="@color/red"
+        android:visibility="gone"
+        />
+
 
 
 </LinearLayout>

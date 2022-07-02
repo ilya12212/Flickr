@@ -9,18 +9,19 @@ import com.example.flickr.main.model.Photo
 import com.example.flickr.main.ui.viewholders.ErrorViewHolder
 import com.example.flickr.main.ui.viewholders.MainViewHolder
 import com.example.flickr.main.ui.viewholders.ProgressViewHolder
+import timber.log.Timber
 
 class MainAdapter(
     val onClick: (Photo) -> Unit,
-    val  onFailedListener: () -> Unit
+    val onFailedListener: () -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val photos = mutableListOf<Photo>()
-    private var pagingState: PagingState =  PagingState.Idle
+    private var pagingState: PagingState = PagingState.Idle
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         when (viewType) {
-            R.layout.item_image -> MainViewHolder(parent,onClick)
+            R.layout.item_image -> MainViewHolder(parent, onClick)
             R.layout.progressbar -> ProgressViewHolder(parent)
             R.layout.error_item -> ErrorViewHolder(parent)
             else -> throw IllegalStateException("Unknown view type: $viewType")
@@ -35,6 +36,7 @@ class MainAdapter(
 
         val count = itemCount
 
+        Timber.i("$count $shouldHasExtraItem $hasExtraItem")
         when {
             shouldHasExtraItem && hasExtraItem -> notifyItemChanged(count - 1)
             !shouldHasExtraItem && hasExtraItem -> notifyItemRemoved(count - 1)
@@ -56,19 +58,18 @@ class MainAdapter(
     }
 
 
-    override fun getItemCount() = photos.size
+    override fun getItemCount() =
+        if (pagingState != PagingState.Idle) photos.size + 1
+        else photos.size
 
-    fun setData(list: List<Photo>) {
-        photos.clear()
-        photos.addAll(list)
+    fun clearData() {
+        if (photos.isNotEmpty()) photos.clear()
         notifyDataSetChanged()
     }
-    fun clearData(){
-        photos.clear()
-    }
-    fun setSearchData(list : List<Photo>){
+
+    fun setSearchData(list: List<Photo>) {
         val oldList = ArrayList(photos)
-        photos.clear()
+        if (photos.isNotEmpty()) photos.clear()
         photos.addAll(list)
         DiffUtil.calculateDiff(getDiffCallback(oldList, list)).dispatchUpdatesTo(this)
 //        notifyDataSetChanged()
@@ -87,7 +88,7 @@ class MainAdapter(
 
     private fun getDiffCallback(
         oldList: List<Photo>,
-        newList: List<Photo>
+        newList: List<Photo>,
     ) = object : DiffUtil.Callback() {
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -106,7 +107,6 @@ class MainAdapter(
 
         override fun getNewListSize(): Int = newList.size
     }
-
 
 
 }

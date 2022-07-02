@@ -34,7 +34,8 @@ class RecyclerFragment :
 
     private val scrollListener: ScrollListener by lazy {
         ScrollListener(linearLayoutManager, loadNextPage = {
-            presenter.getPhotoList(it)
+            if (binding.searchtext.length() == 0) presenter.getPhotoList(it)
+            else presenter.getResultSearchPhotoList(it, binding.searchtext.text.toString())
         })
     }
 
@@ -63,15 +64,17 @@ class RecyclerFragment :
             adapter = photosAdapter
             addOnScrollListener(scrollListener)
         }
-        presenter.getPhotoList(1
-        )
+        presenter.getPhotoList(1)
 
 
         searchtext.doAfterTextChanged {
+            photosAdapter.clearData()
             if (searchtext.text.isNotEmpty()) {
-                presenter.processInputText(searchtext.text.toString())
+                presenter.photos.clear()
+                scrollListener.reset()
+                itemResultSearch1.visibility = TextView.GONE
+                presenter.getResultSearchPhotoList(1, searchtext.text.toString())
             } else {
-                photosAdapter.clearData()
                 itemResultSearch1.visibility = TextView.VISIBLE
             }
         }
@@ -88,7 +91,7 @@ class RecyclerFragment :
 
 
     override fun showPhotoList(results: List<Photo>) {
-        photosAdapter.setData(results)
+        photosAdapter.setSearchData(results)
     }
     private  fun onFailedListener(){
     }
@@ -98,8 +101,7 @@ class RecyclerFragment :
         Timber.e(t.message)
     }
 
-    override fun showNotFoundQuery() {
-        scrollListener.reset()
+    override fun showResultSearch() {
         binding.itemResultSearch1.visibility = TextView.GONE
     }
 

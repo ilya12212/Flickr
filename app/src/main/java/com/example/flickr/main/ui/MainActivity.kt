@@ -12,6 +12,7 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        supportActionBar?.hide()
         changeFragment(RecyclerFragment(), R.id.activity_container)
     }
 }

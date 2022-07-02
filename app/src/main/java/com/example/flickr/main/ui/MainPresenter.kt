@@ -7,10 +7,7 @@ import com.example.flickr.common.mvp.BasePresenter
 import com.example.flickr.common.ui.PagingState
 import com.example.flickr.main.interactor.MainInteractor
 import com.example.flickr.main.model.Photo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -22,8 +19,8 @@ class MainPresenter(
     MainContract.Presenter {
 
     val scope = CoroutineScope(Dispatchers.Main.immediate)
-    private  var currentTime = System.currentTimeMillis()
     val photos  = mutableListOf<Photo>()
+    private var searchJob: Job = Job()
 
 
 
@@ -47,7 +44,8 @@ class MainPresenter(
     }
 
     override fun getResultSearchPhotoList(page : Int, text: String) {
-        scope.launch {
+        searchJob.cancel()
+        searchJob = scope.launch {
             try {
                 view?.showPagingState(PagingState.Loading)
                 Timber.tag("$$$").i("Info")
@@ -77,15 +75,6 @@ class MainPresenter(
             e.printStackTrace()
         }
     }
-
-    override fun processInputText(text: String) {
-        if (System.currentTimeMillis() - currentTime > 10){
-            photos.clear()
-            view?.showNotFoundQuery()
-            currentTime = System.currentTimeMillis()
-            getResultSearchPhotoList(1, text)
-        }
-        }
 }
 
 

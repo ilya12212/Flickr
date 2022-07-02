@@ -17,14 +17,13 @@ interface MainContract : BaseFragmentContract {
         fun showLoading()
         fun showPagingState(pagingstate : PagingState)
         fun failure(t: Throwable)
-        fun showNotFoundQuery()
+        fun showResultSearch()
     }
 
     interface Presenter : MvpPresenter<View> {
         fun getPhotoList(page: Int)
         fun getResultSearchPhotoList(page : Int, text : String)
         fun saveImageToGallery(bitmap : Bitmap)
-        fun processInputText(text : String)
     }
 
 }
