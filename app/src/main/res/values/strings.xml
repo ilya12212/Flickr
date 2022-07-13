@@ -2,4 +2,6 @@
     <string name="app_name">Flickr</string>
     <string name="search_photo">SEARCH PHOTO</string>
     <string name="search">Search</string>
+    <string name="Error">Ничего не найдено !</string>
+    <string name="search">Search</string>
 </resources>
